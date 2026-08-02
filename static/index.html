@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>π Debate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <canvas id="particles" aria-hidden="true"></canvas>
+
+  <div class="frame">
+    <header class="top">
+      <p class="brand">
+        <svg class="pi-logo" viewBox="0 0 56 56" aria-hidden="true" focusable="false">
+          <path
+            fill="currentColor"
+            d="M4 14 L28 6 L52 14 L52 20 L37 20 L37 36 L51 52 L41.5 56 L28 41 L14.5 56 L5 52 L19 36 L19 20 L4 20 Z"
+          />
+        </svg>
+        <span>Debate</span>
+      </p>
+      <p class="mono meta" id="clock">--:--:--</p>
+    </header>
+
+    <div class="subheader">
+      <button type="button" class="mono ghost-btn history-btn" id="history-toggle">history</button>
+    </div>
+
+    <aside class="history-panel hidden" id="history-panel" aria-label="Workflow history">
+      <div class="history-head">
+        <p class="mono kicker">workflows</p>
+        <button type="button" class="mono ghost-btn" id="history-close">close</button>
+      </div>
+      <ul class="history-list" id="history-list"></ul>
+      <p class="mono history-empty hidden" id="history-empty">no workflows yet</p>
+    </aside>
+
+    <main class="stage" id="stage">
+      <section class="input-zone" id="input-zone">
+        <figure class="pi-diagram" aria-label="Debate flow diagram">
+          <svg viewBox="0 0 420 168" role="img">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 Z" fill="#f2ebe0" />
+              </marker>
+              <marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0 0 L10 5 L0 10 Z" fill="#d6ff3a" />
+              </marker>
+            </defs>
+
+            <!-- construction grid ticks -->
+            <g class="ticks" stroke="currentColor" stroke-width="1">
+              <path d="M20 18 h12 M26 12 v12" />
+              <path d="M388 18 h12 M394 12 v12" />
+              <path d="M20 150 h12 M26 144 v12" />
+              <path d="M388 150 h12 M394 144 v12" />
+            </g>
+
+            <!-- dimension rails -->
+            <g class="rails" fill="none" stroke="currentColor" stroke-width="1">
+              <path d="M40 28 H380" stroke-dasharray="2 4" opacity="0.45" />
+              <path d="M40 140 H380" stroke-dasharray="2 4" opacity="0.45" />
+              <path d="M48 34 V134" stroke-dasharray="2 4" opacity="0.35" />
+              <path d="M372 34 V134" stroke-dasharray="2 4" opacity="0.35" />
+            </g>
+
+            <!-- scientist node -->
+            <g class="node" transform="translate(58 58)">
+              <path d="M0 -18 L18 0 L0 18 L-18 0 Z" class="diamond" />
+              <text class="mono-label" x="0" y="36" text-anchor="middle">sci</text>
+            </g>
+
+            <!-- philosopher node -->
+            <g class="node" transform="translate(362 58)">
+              <path d="M0 -18 L18 0 L0 18 L-18 0 Z" class="diamond" />
+              <text class="mono-label" x="0" y="36" text-anchor="middle">phi</text>
+            </g>
+
+            <!-- judge node -->
+            <g class="node accent" transform="translate(210 138)">
+              <path d="M0 -14 L22 0 L0 14 L-22 0 Z" class="diamond" />
+              <text class="mono-label accent-text" x="0" y="28" text-anchor="middle">judge</text>
+            </g>
+
+            <!-- angular pi mark -->
+            <g class="pi-mark" transform="translate(210 72)">
+              <path
+                class="pi-body"
+                d="M-54 -28 L0 -36 L54 -28 L48 -18 L18 -22 L18 8 L36 30 L26 36 L0 12 L-26 36 L-36 30 L-18 8 L-18 -22 L-48 -18 Z"
+              />
+              <circle cx="-54" cy="-28" r="2.2" class="pin" />
+              <circle cx="54" cy="-28" r="2.2" class="pin" />
+              <circle cx="36" cy="30" r="2.2" class="pin" />
+              <circle cx="-36" cy="30" r="2.2" class="pin" />
+            </g>
+
+            <!-- edges: pointy connectors -->
+            <g class="edges" fill="none" stroke-width="1.4">
+              <path d="M76 58 H140" stroke="#f2ebe0" marker-end="url(#arrow)" />
+              <path d="M344 58 H280" stroke="#f2ebe0" marker-end="url(#arrow)" />
+              <path d="M210 98 V118" class="edge-accent" marker-end="url(#arrow-accent)" />
+            </g>
+
+            <!-- playful callouts -->
+            <g class="callouts">
+              <text class="mono-label faint" x="210" y="18" text-anchor="middle">parallel · argue</text>
+              <text class="mono-label faint" x="118" y="50" text-anchor="middle">in</text>
+              <text class="mono-label faint" x="302" y="50" text-anchor="middle">in</text>
+              <path d="M96 44 L110 44 L118 50 L110 56 L96 56" class="tag" />
+              <path d="M324 44 L310 44 L302 50 L310 56 L324 56" class="tag" />
+              <text class="mono-label accent-text" x="232" y="112">out</text>
+            </g>
+          </svg>
+        </figure>
+
+        <p class="mono kicker">multi-agent · stream</p>
+        <form id="debate-form" autocomplete="off">
+          <label class="sr-only" for="question">Question</label>
+          <div class="input-shell">
+            <input
+              id="question"
+              name="question"
+              type="text"
+              placeholder="pose a question"
+              maxlength="500"
+              required
+            />
+            <button type="submit" id="submit" aria-label="Start debate">
+              <span class="mono">run</span>
+            </button>
+          </div>
+        </form>
+        <p class="mono hint" id="hint">scientist · philosopher · judge</p>
+      </section>
+
+      <section class="feed hidden" id="feed" aria-live="polite">
+        <div class="feed-head">
+          <p class="mono kicker" id="status-line">idle</p>
+          <div class="feed-actions">
+            <button type="button" class="mono ghost-btn hidden" id="back-live">live</button>
+            <button type="button" class="mono reset" id="reset">new</button>
+          </div>
+        </div>
+
+        <p class="question-echo" id="question-echo"></p>
+
+        <div class="timeline" id="timeline"></div>
+
+        <article class="final-block hidden" id="final-block">
+          <div class="final-head">
+            <p class="mono label">final · judge</p>
+          </div>
+          <div class="final-body" id="final-body"></div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/particles.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
