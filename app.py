@@ -36,6 +36,11 @@ def home():
     return FileResponse(STATIC_DIR / "index.html")
 
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+
 @app.post("/api/debate")
 def debate(request: DebateRequest):
     question = request.question.strip()
